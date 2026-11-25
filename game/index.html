@@ -469,12 +469,13 @@ function result(card,ok){
     $('go').onclick=()=>{closeVeil();next()};return;
   }
   S.phase='after';
-  let msg,btns='';
+  let msg,btns='',firstC=false;
   if(ok&&!p.tokens.includes(b)){
     p.tokens.push(b);
     msg=`<span class="bigchip" style="background:${SH[b][0]}"></span><div class="msg">${esc(p.name)} earned the ${esc(bname(b))} token!<small>${has9(p)?'That makes all 9! Now get back to Base Camp to win.':`${p.tokens.length} of 9 tokens.`}</small></div>`;
   }else if(ok){
     const got=cmp(p)<MAXC;if(got)p.compass=cmp(p)+1;
+    if(got&&!S.compassTip){S.compassTip=true;firstC=true}
     msg=`${got?`<span class="bigc">${COMPASS(64)}</span>`:''}<div class="msg">${got?`${esc(p.name)} earned a compass!`:'Correct!'}<small>${got?`You already have the ${esc(bname(b))} token, so you get a compass instead (${cmp(p)} of ${MAXC}). Use it to skip a question on a square whose token you still need.`:`Your compass bag is full (${MAXC} of ${MAXC}). Use one to skip a question you don't know.`}</small></div>`;
   }else{
     msg=`<div class="msg">Not this time!<small>No token this time. ${esc(p.name)} stays on this square.</small></div>`;
@@ -482,7 +483,19 @@ function result(card,ok){
   save();drawDock();
   foot.innerHTML=msg+btns+`<button class="btn main" id="go" type="button">${S.players.length>1?'Next player':'Keep going'}</button>`;
   if(!ok)$('go').textContent='End turn';
-  $('go').onclick=()=>{closeVeil();next()};
+  $('go').onclick=()=>{
+    if(firstC){compassTip();return}
+    closeVeil();next()};
+}
+/* First compass of the game: a one-time reminder of what it does */
+function compassTip(){
+  openVeil(`<div class="box" style="text-align:center"><div style="width:72px;height:72px;margin:0 auto 6px">${COMPASS(72).replace('style="','style="width:72px;height:72px;')}</div><h2>Your first compass!</h2>
+  <ul style="text-align:left;line-height:1.45;margin:8px 0 14px;padding-left:20px">
+  <li><b>How you earn one:</b> answer right on a habitat whose token you already have.</li>
+  <li><b>What it does:</b> on a square whose token you still need, tap <b>Use a compass</b> on the question to skip it and get a new one.</li>
+  <li>You can hold up to <b>3</b>. Your compasses show next to your name in the player list.</li></ul>
+  <div class="row" style="justify-content:center"><button class="btn main" id="tipOk" type="button">Got it</button></div></div>`);
+  $('tipOk').onclick=()=>{closeVeil();next()};
 }
 function next(){S.turn=(S.turn+1)%S.players.length;startTurn()}
 
@@ -506,7 +519,7 @@ function win(){
 }
 
 /* ---------- setup, rules, menu ---------- */
-const RULES=`<ol><li>Everyone starts at <b>Base Camp</b>. On your turn, tap the die and move exactly that many steps along the trails, without turning back. Tap one of the glowing squares.</li><li>A green <b>check mark</b> on a glowing square means you already have that habitat's token, so pick another square if you can.</li><li>Each habitat has its own color. Land on a square and you get a surprise question from that habitat: multiple choice, true or false, fill in the blank, or a <b>Guess this animal</b> photo.</li><li>Answer right to earn that habitat's token. Its wedge lights up in the ring around your piece.</li><li>Answer right on a habitat you <b>already have</b> and you earn a <b>compass</b> (hold up to 3). On a square whose token you still need, use a compass to skip a question you don't know and draw a new one.</li><li>Answer wrong and your turn ends. No token, and you stay put.</li><li>Fill all <b>9 wedges</b> and your piece gets a crown. Then get back to Base Camp; any roll that reaches it counts.</li><li>The other players pick a habitat for your <b>final question</b>. Get it right and you win!</li></ol>`;
+const RULES=`<ol><li>Everyone starts at <b>Base Camp</b>. On your turn, tap the die and move exactly that many steps along the trails, without turning back. Tap one of the glowing squares.</li><li>A green <b>check mark</b> on a glowing square means you already have that habitat's token, so pick another square if you can.</li><li>Each habitat has its own color. Land on a square and you get a surprise question from that habitat: multiple choice, true or false, fill in the blank, or a <b>Guess this animal</b> photo.</li><li>Answer right to earn that habitat's token. Its wedge lights up in the ring around your piece.</li><li><b>Earning a compass:</b> answer right on a habitat whose token you <b>already have</b> and you earn a <b>compass</b> instead. You can hold up to 3.</li><li><b>Using a compass:</b> on a square whose token you still need, tap <b>Use a compass</b> to skip a question you don't know and get a new one. The skipped card goes back in the deck.</li><li>Answer wrong and your turn ends. No token, and you stay put.</li><li>Fill all <b>9 wedges</b> and your piece gets a crown. Then get back to Base Camp; any roll that reaches it counts.</li><li>The other players pick a habitat for your <b>final question</b>. Get it right and you win!</li></ol>`;
 let LAST=[];
 function setup(){welcome()}
 function welcome(){
