@@ -9,7 +9,8 @@
  *   const final = deck.drawAny('ocean');              // final question: random type from the habitat the others picked
  *   FieldCards.render(el, final, data, { final: true, onResult: ... });
  *
- * Rules: a correct answer takes the card out of the deck; a wrong answer leaves it in (shuffled back).
+ * Rules: once a card's answer has been shown (right or wrong) it leaves the deck until that habitat runs out
+ *   or a new game starts, so no answer repeats. A card skipped with a compass was never answered, so it stays in.
  * The draw avoids the same animal twice in a row in a habitat when it can. Nothing is stored by this
  * module: the game keeps deck.save() with its own save data. Needs the Fredoka + Nunito Sans fonts
  * (added to the page automatically if missing).
@@ -81,8 +82,8 @@
       },
       /* Final question: any type, at random, from the habitat the other players picked. */
       drawAny(b) { const t = pick(TYPES.filter(x => pool(b, x).length)); return t ? this.draw(b, t) : null; },
-      /* Correct: out of the deck. Wrong: stays in, so it can come up again. */
-      answer(card, correct) { if (correct) used.add(card.id); },
+      /* Answered, right or wrong: out of the deck (its answer has been seen). Skipped cards are never answered, so they stay in. */
+      answer(card, correct) { used.add(card.id); },
       remaining(b, t) { return pool(b, t).length; },
       total(b, t) { return data.cards.filter(c => c.biome === b && fits(c, t)).length; },
       isUsed(id) { return used.has(id); },
