@@ -477,15 +477,12 @@ function result(card,ok){
     const got=cmp(p)<MAXC;if(got)p.compass=cmp(p)+1;
     msg=`${got?`<span class="bigc">${COMPASS(64)}</span>`:''}<div class="msg">${got?`${esc(p.name)} earned a compass!`:'Correct!'}<small>${got?`You already have the ${esc(bname(b))} token, so you get a compass instead (${cmp(p)} of ${MAXC}). Use it to skip a question on a square whose token you still need.`:`Your compass bag is full (${MAXC} of ${MAXC}). Use one to skip a question you don't know.`}</small></div>`;
   }else{
-    const can=!S.second;
-    msg=`<div class="msg">${can?'Not this time!':'Missed the second one too.'}<small>${can?'Take a second chance with a new question, or end the turn.':`No token this time. ${esc(p.name)} stays on this square.`}</small></div>`;
-    if(can)btns=`<button class="btn" id="again" type="button">Second chance</button>`;
+    msg=`<div class="msg">Not this time!<small>No token this time. ${esc(p.name)} stays on this square.</small></div>`;
   }
   save();drawDock();
   foot.innerHTML=msg+btns+`<button class="btn main" id="go" type="button">${S.players.length>1?'Next player':'Keep going'}</button>`;
   if(!ok)$('go').textContent='End turn';
   $('go').onclick=()=>{closeVeil();next()};
-  if($('again'))$('again').onclick=()=>{S.second=true;S.phase='question';const n=N[p.pos];S.card=drawFor(n.zone).id;save();ask()};
 }
 function next(){S.turn=(S.turn+1)%S.players.length;startTurn()}
 
@@ -509,7 +506,7 @@ function win(){
 }
 
 /* ---------- setup, rules, menu ---------- */
-const RULES=`<ol><li>Everyone starts at <b>Base Camp</b>. On your turn, tap the die and move exactly that many steps along the trails, without turning back. Tap one of the glowing squares.</li><li>A green <b>check mark</b> on a glowing square means you already have that habitat's token, so pick another square if you can.</li><li>Each habitat has its own color. Land on a square and you get a surprise question from that habitat: multiple choice, true or false, fill in the blank, or a <b>Guess this animal</b> photo.</li><li>Answer right to earn that habitat's token. Its wedge lights up in the ring around your piece.</li><li>Answer right on a habitat you <b>already have</b> and you earn a <b>compass</b> (hold up to 3). On a square whose token you still need, use a compass to skip a question you don't know and draw a new one.</li><li>Answer wrong and you choose: <b>end your turn</b>, or take a <b>second chance</b> with a new question from the same square. Miss that one too and your turn ends. No token, and you stay put.</li><li>Fill all <b>9 wedges</b> and your piece gets a crown. Then get back to Base Camp; any roll that reaches it counts.</li><li>The other players pick a habitat for your <b>final question</b>. Get it right and you win!</li></ol>`;
+const RULES=`<ol><li>Everyone starts at <b>Base Camp</b>. On your turn, tap the die and move exactly that many steps along the trails, without turning back. Tap one of the glowing squares.</li><li>A green <b>check mark</b> on a glowing square means you already have that habitat's token, so pick another square if you can.</li><li>Each habitat has its own color. Land on a square and you get a surprise question from that habitat: multiple choice, true or false, fill in the blank, or a <b>Guess this animal</b> photo.</li><li>Answer right to earn that habitat's token. Its wedge lights up in the ring around your piece.</li><li>Answer right on a habitat you <b>already have</b> and you earn a <b>compass</b> (hold up to 3). On a square whose token you still need, use a compass to skip a question you don't know and draw a new one.</li><li>Answer wrong and your turn ends. No token, and you stay put.</li><li>Fill all <b>9 wedges</b> and your piece gets a crown. Then get back to Base Camp; any roll that reaches it counts.</li><li>The other players pick a habitat for your <b>final question</b>. Get it right and you win!</li></ol>`;
 let LAST=[];
 function setup(){welcome()}
 function welcome(){
