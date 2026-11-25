@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Wild Animals">
+<meta name="theme-color" content="#000000">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Cover · Wild Animals of the World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito+Sans:wght@400;600;700;800&amp;display=swap">
+<style>
+
+a{color:#2F5D3A}a:hover{color:#1F3F27}
+</style>
+<style>
+html,body{margin:0;height:100%;background:#000;overflow:hidden}
+#fit{position:absolute;left:50%;top:50%;width:816px;height:1056px;transform-origin:center center}
+</style>
+</head>
+<body>
+<div id="fit">
+<a href="Contents.html" aria-label="Open the journal" data-journal="1" style="position: relative; display: block; width: 816px; height: 1056px; overflow: hidden; background: radial-gradient(ellipse at 50% 45%, #3A2C1B, #1E170C 75%); text-decoration: none; cursor: pointer">
+  <img src="cover.webp" alt="A worn brown leather field journal with a brass compass rose on the cover and a leather strap with a brass snap" style="position: absolute; left: 0; top: 12px; width: 816px; height: 1031px; object-fit: contain; filter: drop-shadow(0 14px 22px rgba(0,0,0,.6))">
+  <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Wild Animals of the World: A Field Guide</h1>
+</a>
+</div>
+<script>
+(function(){
+  var el=document.getElementById('fit'),W=816,H=1056;
+  function fit(){var k=Math.min(innerWidth/W,innerHeight/H);el.style.transform='translate(-50%,-50%) scale('+k+')'}
+  addEventListener('resize',fit);fit();
+  function show(li,on){var a=li.querySelector('.ans'),b=li.querySelector('.qa'),c=b.style.borderColor;a.hidden=!on;b.textContent=on?'Hide':'Answer';
+    b.style.background=on?c:'transparent';b.style.color=on?b.dataset.on:b.dataset.off;b.setAttribute('aria-label',(on?'Hide':'Show')+' answer to question '+b.dataset.n)}
+  var lis=[].slice.call(document.querySelectorAll('li')).filter(function(li){return li.querySelector('.qa')});
+  lis.forEach(function(li,i){var b=li.querySelector('.qa');b.dataset.n=i+1;b.dataset.off=b.style.color;b.dataset.on=li.parentNode.parentNode.style.background;
+    b.addEventListener('click',function(){show(li,li.querySelector('.ans').hidden)})});
+  var all=document.querySelector('.qall');
+  if(all)all.addEventListener('click',function(){var on=lis.some(function(li){return li.querySelector('.ans').hidden});lis.forEach(function(li){show(li,on)});all.textContent=on?'Hide all answers':'Show all answers'});
+})();
+</script>
+</body>
+</html>
