@@ -412,7 +412,7 @@ function closeVeil(){$('veil').classList.remove('open');$('sheet').innerHTML=''}
 async function ask(){
   const card=cardById(S.card),p=cur(),final=S.phase==='final',b=card.biome;
   banner(final?`Final question for <b>${esc(p.name)}</b>!`:`<b>${esc(p.name)}</b> landed on ${esc(bname(b))}`);
-  openVeil(`<div class="deal" id="deal"><div id="cardEl"></div><div class="back" id="back" style="--k:${shade(b,card.type)};--d:${SH[b][0]};--m:${SH[b][1]}"><div class="bf"><svg viewBox="-42 -112 84 118" width="54" height="76" aria-hidden="true">${pinG(p,'bp',false)}</svg><span class="bl">Field Check</span><span class="bh">${esc(bname(b))}</span><span class="bt">${esc(TN[card.type])}</span></div></div></div><div class="foot" id="foot"><div class="msg">${final?`${esc(p.name)}, answer this to win the game.`:`${esc(p.name)}, here's your question.`}</div>${!final&&!p.tokens.includes(b)&&cmp(p)>0?`<button class="btn cbtn" id="useC" type="button">${COMPASS(30)} Use a compass: skip this question <small>(${cmp(p)} left)</small></button>`:''}</div>`);
+  openVeil(`<div class="deal" id="deal"><div id="cardEl"></div><div class="back" id="back" style="--k:${shade(b,card.type)};--d:${SH[b][0]};--m:${SH[b][1]}"><div class="bf"><svg viewBox="-42 -112 84 118" width="54" height="76" aria-hidden="true">${pinG(p,'bp',false)}</svg><span class="bl">Field Check</span><span class="bh">${esc(bname(b))}</span><span class="bt">${esc(TN[card.type])}</span></div></div></div><div class="foot" id="foot"><div class="msg">${final?`${esc(p.name)}, answer this to win the game.`:`${esc(p.name)}, here's your question.`}</div>${!final&&cmp(p)>0?`<button class="btn cbtn" id="useC" type="button">${COMPASS(30)} Use a compass: skip this question <small>(${cmp(p)} left)</small></button>`:''}</div>`);
   F.render($('cardEl'),card,D,{final,deal:false,onResult:ok=>result(card,ok)});
   if($('useC')){
     $('useC').onclick=()=>{p.compass=cmp(p)-1;let c=null;for(let t=0;t<6&&(!c||c.id===card.id);t++)c=drawFor(b);S.card=c.id;save();drawDock();ask()};
@@ -476,7 +476,7 @@ function result(card,ok){
   }else if(ok){
     const got=cmp(p)<MAXC;if(got)p.compass=cmp(p)+1;
     if(got&&!S.compassTip){S.compassTip=true;firstC=true}
-    msg=`${got?`<span class="bigc">${COMPASS(64)}</span>`:''}<div class="msg">${got?`${esc(p.name)} earned a compass!`:'Correct!'}<small>${got?`You already have the ${esc(bname(b))} token, so you get a compass instead (${cmp(p)} of ${MAXC}). Use it to skip a question on a square whose token you still need.`:`Your compass bag is full (${MAXC} of ${MAXC}). Use one to skip a question you don't know.`}</small></div>`;
+    msg=`${got?`<span class="bigc">${COMPASS(64)}</span>`:''}<div class="msg">${got?`${esc(p.name)} earned a compass!`:'Correct!'}<small>${got?`You already have the ${esc(bname(b))} token, so you get a compass instead (${cmp(p)} of ${MAXC}). Use it to skip a hard question on any square.`:`Your compass bag is full (${MAXC} of ${MAXC}). Use one to skip a question you don't know.`}</small></div>`;
   }else{
     msg=`<div class="msg">Not this time!<small>No token this time. ${esc(p.name)} stays on this square.</small></div>`;
   }
@@ -492,7 +492,7 @@ function compassTip(){
   openVeil(`<div class="box" style="text-align:center"><div style="width:72px;height:72px;margin:0 auto 6px">${COMPASS(72).replace('style="','style="width:72px;height:72px;')}</div><h2>Your first compass!</h2>
   <ul style="text-align:left;line-height:1.45;margin:8px 0 14px;padding-left:20px">
   <li><b>How you earn one:</b> answer right on a habitat whose token you already have.</li>
-  <li><b>What it does:</b> on a square whose token you still need, tap <b>Use a compass</b> on the question to skip it and get a new one.</li>
+  <li><b>What it does:</b> on any square, tap <b>Use a compass</b> on a hard question to skip it and get a new one.</li>
   <li>You can hold up to <b>3</b>. Your compasses show next to your name in the player list.</li></ul>
   <div class="row" style="justify-content:center"><button class="btn main" id="tipOk" type="button">Got it</button></div></div>`);
   $('tipOk').onclick=()=>{closeVeil();next()};
@@ -519,7 +519,7 @@ function win(){
 }
 
 /* ---------- setup, rules, menu ---------- */
-const RULES=`<ol><li>Everyone starts at <b>Base Camp</b>. On your turn, tap the die and move exactly that many steps along the trails, without turning back. Tap one of the glowing squares.</li><li>A green <b>check mark</b> on a glowing square means you already have that habitat's token, so pick another square if you can.</li><li>Each habitat has its own color. Land on a square and you get a surprise question from that habitat: multiple choice, true or false, fill in the blank, or a <b>Guess this animal</b> photo.</li><li>Answer right to earn that habitat's token. Its wedge lights up in the ring around your piece.</li><li><b>Earning a compass:</b> answer right on a habitat whose token you <b>already have</b> and you earn a <b>compass</b> instead. You can hold up to 3.</li><li><b>Using a compass:</b> on a square whose token you still need, tap <b>Use a compass</b> to skip a question you don't know and get a new one. The skipped card goes back in the deck.</li><li>Answer wrong and your turn ends. No token, and you stay put.</li><li>Fill all <b>9 wedges</b> and your piece gets a crown. Then get back to Base Camp; any roll that reaches it counts.</li><li>The other players pick a habitat for your <b>final question</b>. Get it right and you win!</li></ol>`;
+const RULES=`<ol><li>Everyone starts at <b>Base Camp</b>. On your turn, tap the die and move exactly that many steps along the trails, without turning back. Tap one of the glowing squares.</li><li>A green <b>check mark</b> on a glowing square means you already have that habitat's token, so pick another square if you can.</li><li>Each habitat has its own color. Land on a square and you get a surprise question from that habitat: multiple choice, true or false, fill in the blank, or a <b>Guess this animal</b> photo.</li><li>Answer right to earn that habitat's token. Its wedge lights up in the ring around your piece.</li><li><b>Earning a compass:</b> answer right on a habitat whose token you <b>already have</b> and you earn a <b>compass</b> instead. You can hold up to 3.</li><li><b>Using a compass:</b> on any square, tap <b>Use a compass</b> to skip a hard question and get a new one. The skipped card goes back in the deck. (Not on the final question.)</li><li>Answer wrong and your turn ends. No token, and you stay put.</li><li>Fill all <b>9 wedges</b> and your piece gets a crown. Then get back to Base Camp; any roll that reaches it counts.</li><li>The other players pick a habitat for your <b>final question</b>. Get it right and you win!</li></ol>`;
 let LAST=[];
 function setup(){welcome()}
 function welcome(){
